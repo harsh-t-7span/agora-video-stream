@@ -14,9 +14,9 @@ type ChannelMode = "live" | "rtc";
 
 export default function VideoCalling() {
   const [mode, setMode] = useState<ChannelMode>("live");
-  const [appId, setAppId] = useState("c143c8f57f5644dd9ac6ce101678dd5c");
-  const [channel, setChannel] = useState("demo_channel");
-  const [token, setToken] = useState(process.env.NEXT_PUBLIC_AGORA_TOKEN ?? "");
+  const [appId, setAppId] = useState("");
+  const [channel, setChannel] = useState("");
+  const [token, setToken] = useState("");
   const client = useMemo(
     () => AgoraRTC.createClient({ mode, codec: "vp8" }),
     [mode],
@@ -146,15 +146,15 @@ function StreamViewer({
               />
             </label>
 
-            {/* <label className="flex flex-col gap-1 text-sm">
-              Token (optional)
+            <label className="flex flex-col gap-1 text-sm">
+              Token
               <input
                 className="rounded-md border border-zinc-700 bg-zinc-950 px-3 py-2"
                 onChange={(event) => onTokenChange(event.target.value)}
                 placeholder="Leave empty only if certificate is off"
                 value={token}
               />
-            </label> */}
+            </label>
 
             {error ? (
               <p className="text-sm text-red-400">{error.message}</p>
