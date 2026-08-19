@@ -146,7 +146,7 @@ function StreamViewer({
               />
             </label>
 
-            <label className="flex flex-col gap-1 text-sm">
+            {/* <label className="flex flex-col gap-1 text-sm">
               Token (optional)
               <input
                 className="rounded-md border border-zinc-700 bg-zinc-950 px-3 py-2"
@@ -154,7 +154,7 @@ function StreamViewer({
                 placeholder="Leave empty only if certificate is off"
                 value={token}
               />
-            </label>
+            </label> */}
 
             {error ? (
               <p className="text-sm text-red-400">{error.message}</p>
