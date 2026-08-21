@@ -8,6 +8,7 @@ import AgoraRTC, {
   useRTCClient,
   useRemoteUsers,
 } from "agora-rtc-react";
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { ThreeLive360Player } from "@/component/three-live-360-player";
 
@@ -16,9 +17,11 @@ type ViewerMode = "flat" | "360";
 
 export default function VideoCalling() {
   const [mode, setMode] = useState<ChannelMode>("live");
-  const [appId, setAppId] = useState("");
-  const [channel, setChannel] = useState("");
-  const [token, setToken] = useState("");
+  const [appId, setAppId] = useState("c143c8f57f5644dd9ac6ce101678dd5c");
+  const [channel, setChannel] = useState("demo_channel");
+  const [token, setToken] = useState(
+    "007eJxTYPCwLlmr3yY29V17n13z1yjfFH7O/4Iz6y4Y5Ifl1ZjZPFBgSDY0MU62SDM1TzM1MzFJSbFMTDZLTjU0MDQzt0hJMU1e8aI9qyGQkSH88zkmRgYIBPF5GFJSc/PjkzMS8/JScxgYAP5WInA=",
+  );
   const client = useMemo(
     () => AgoraRTC.createClient({ mode, codec: "vp8" }),
     [mode],
@@ -62,7 +65,7 @@ function StreamViewer({
   const client = useRTCClient();
   const [calling, setCalling] = useState(false);
   const [roleReady, setRoleReady] = useState(false);
-  const [viewerMode, setViewerMode] = useState<ViewerMode>("flat");
+  const [viewerMode, setViewerMode] = useState<ViewerMode>("360");
   const isConnected = useIsConnected();
 
   useEffect(() => {
@@ -96,10 +99,27 @@ function StreamViewer({
 
   const remoteUsers = useRemoteUsers();
 
+  async function handleLeave() {
+    setCalling(false);
+    try {
+      await client.leave();
+    } catch {
+      // Already left or disconnect in progress.
+    }
+  }
+
   return (
     <div className="flex min-h-screen flex-col bg-black text-white">
-      {!isConnected ? (
-        <div className="flex flex-1 items-center justify-center p-6">
+      {!calling || !isConnected ? (
+        <div className="relative flex flex-1 items-center justify-center p-6">
+          <div className="absolute right-4 top-4 z-10">
+            <Link
+              className="rounded-md border border-zinc-700 bg-black/70 px-4 py-2 text-sm font-medium text-white backdrop-blur hover:bg-zinc-900"
+              href="/test-recorded"
+            >
+              Recorded test
+            </Link>
+          </div>
           <form
             className="flex w-full max-w-md flex-col gap-4 rounded-xl border border-zinc-800 bg-zinc-900 p-6"
             onSubmit={(event) => {
@@ -208,7 +228,8 @@ function StreamViewer({
             </div>
           )}
 
-          <div className="absolute right-4 top-4 flex gap-2">
+          <div className="absolute right-4 top-4 z-50 flex gap-2">
+            {/* Demo: Flat toggle hidden — default is 360
             <button
               className={`rounded-md px-4 py-2 text-sm font-medium ${
                 viewerMode === "flat"
@@ -220,7 +241,8 @@ function StreamViewer({
             >
               Flat
             </button>
-            <button
+            */}
+            {/* <button
               className={`rounded-md px-4 py-2 text-sm font-medium ${
                 viewerMode === "360"
                   ? "bg-white text-black"
@@ -230,10 +252,12 @@ function StreamViewer({
               type="button"
             >
               360
-            </button>
+            </button> */}
             <button
               className="rounded-md bg-white px-4 py-2 font-medium text-black"
-              onClick={() => setCalling(false)}
+              onClick={() => {
+                void handleLeave();
+              }}
               type="button"
             >
               Leave
