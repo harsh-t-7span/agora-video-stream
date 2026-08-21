@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# large local Insta360 exports (keep .gitkeep + small sample)
+/public/videos/*
+!/public/videos/.gitkeep
+!/public/videos/test-360.mp4
