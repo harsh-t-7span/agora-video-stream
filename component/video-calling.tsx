@@ -65,7 +65,7 @@ function StreamViewer({
   const client = useRTCClient();
   const [calling, setCalling] = useState(false);
   const [roleReady, setRoleReady] = useState(false);
-  const [viewerMode, setViewerMode] = useState<ViewerMode>("360");
+  const [viewerMode, setViewerMode] = useState<ViewerMode>("flat");
   const isConnected = useIsConnected();
 
   useEffect(() => {
