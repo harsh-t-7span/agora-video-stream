@@ -9,8 +9,10 @@ import AgoraRTC, {
   useRemoteUsers,
 } from "agora-rtc-react";
 import { useEffect, useMemo, useState } from "react";
+import { ThreeLive360Player } from "@/component/three-live-360-player";
 
 type ChannelMode = "live" | "rtc";
+type ViewerMode = "flat" | "360";
 
 export default function VideoCalling() {
   const [mode, setMode] = useState<ChannelMode>("live");
@@ -60,6 +62,7 @@ function StreamViewer({
   const client = useRTCClient();
   const [calling, setCalling] = useState(false);
   const [roleReady, setRoleReady] = useState(false);
+  const [viewerMode, setViewerMode] = useState<ViewerMode>("flat");
   const isConnected = useIsConnected();
 
   useEffect(() => {
@@ -177,26 +180,65 @@ function StreamViewer({
             </div>
           ) : (
             <div className="grid min-h-screen flex-1 grid-cols-1">
-              {remoteUsers.map((user) => (
-                <RemoteUser
-                  className="stream-video min-h-screen w-full bg-black"
-                  key={user.uid}
-                  playAudio
-                  playVideo
-                  user={user}
-                  videoPlayerConfig={{ fit: "contain", mirror: false }}
-                />
-              ))}
+              {remoteUsers.map((user) =>
+                viewerMode === "flat" || !user.videoTrack ? (
+                  <RemoteUser
+                    className="stream-video min-h-screen w-full bg-black"
+                    key={user.uid}
+                    playAudio
+                    playVideo
+                    user={user}
+                    videoPlayerConfig={{ fit: "contain", mirror: false }}
+                  />
+                ) : (
+                  <div
+                    className="relative min-h-screen w-full bg-black"
+                    key={user.uid}
+                  >
+                    <ThreeLive360Player videoTrack={user.videoTrack} />
+                    <RemoteUser
+                      className="sr-only"
+                      playAudio
+                      playVideo={false}
+                      user={user}
+                    />
+                  </div>
+                ),
+              )}
             </div>
           )}
 
-          <button
-            className="absolute right-4 top-4 rounded-md bg-white px-4 py-2 font-medium text-black"
-            onClick={() => setCalling(false)}
-            type="button"
-          >
-            Leave
-          </button>
+          <div className="absolute right-4 top-4 flex gap-2">
+            <button
+              className={`rounded-md px-4 py-2 text-sm font-medium ${
+                viewerMode === "flat"
+                  ? "bg-white text-black"
+                  : "bg-zinc-800 text-white"
+              }`}
+              onClick={() => setViewerMode("flat")}
+              type="button"
+            >
+              Flat
+            </button>
+            <button
+              className={`rounded-md px-4 py-2 text-sm font-medium ${
+                viewerMode === "360"
+                  ? "bg-white text-black"
+                  : "bg-zinc-800 text-white"
+              }`}
+              onClick={() => setViewerMode("360")}
+              type="button"
+            >
+              360
+            </button>
+            <button
+              className="rounded-md bg-white px-4 py-2 font-medium text-black"
+              onClick={() => setCalling(false)}
+              type="button"
+            >
+              Leave
+            </button>
+          </div>
         </div>
       )}
     </div>

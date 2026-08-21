@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# large local test videos (keep public/videos/.gitkeep)
+/public/videos/*
+!/public/videos/.gitkeep
